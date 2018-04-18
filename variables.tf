@@ -88,3 +88,7 @@ variable "route53_elb_cname" {
   type    = "string"
   default = ""
 }
+
+variable "ami_id" {
+  type = "string"
+}

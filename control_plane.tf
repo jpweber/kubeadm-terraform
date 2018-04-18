@@ -1,3 +1,12 @@
+// hack to get around terraform not allowing variable interpolation 
+// in aws tags block
+locals {
+  common_tags = {
+    Name                                 = "control-plane"
+    "kubernetes.io/cluster/${var.stage}" = "${var.stage}"
+  }
+}
+
 resource "aws_instance" "control_plane" {
   ami = "${data.aws_ami.ubuntu.id}"
 
@@ -27,19 +36,20 @@ resource "aws_instance" "control_plane" {
     delete_on_termination = true
   }
 
-  tags {
-    Name                                 = "control-plane"
-    "kubernetes.io/cluster/${var.stage}" = "${var.stage}"
-  }
+  # tags {
+  #   Name                         = "control-plane"
+  #   "kubernetes.io/cluster/test" = "test"
+  # }
 
+  tags = "${merge(
+    local.common_tags
+  )}"
   associate_public_ip_address = true
   user_data                   = "${data.template_cloudinit_config.control_plane.rendered}"
-
   connection {
     user        = "ubuntu"
     private_key = "${file("/Users/jamesweber/.ssh/id_rsa")}"
   }
-
   provisioner "remote-exec" {
     inline = [
       "mkdir -p $HOME/.kube",

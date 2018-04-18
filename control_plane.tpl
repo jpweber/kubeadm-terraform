@@ -38,7 +38,9 @@ write_files:
         # oidc-client-id: XXXXYYYYZZZZ000011122233
         # oidc-username-claim: email
         # oidc-groups-claim: groups
-
+      controllerManagerExtraArgs:
+        cloud-provider: aws
+        configure-cloud-routes: "false"
       apiServerExtraVolumes: 
         - name: "audit-policy"
           hostPath: "/etc/kubernetes/audit"
