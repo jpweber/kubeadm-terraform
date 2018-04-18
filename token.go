@@ -1,5 +1,7 @@
 package main
 
+// Generate kubeadm token
+// Usage:  go run token.go
 // Extracted from https://github.com/kubernetes/kubernetes/blob/master/cmd/kubeadm/app/util/tokens.go
 
 import (
@@ -13,6 +15,7 @@ const (
 	TokenBytes = 8
 )
 
+// RandBytes - Generate random bytes
 func RandBytes(length int) ([]byte, string, error) {
 	b := make([]byte, length)
 	_, err := rand.Read(b)
