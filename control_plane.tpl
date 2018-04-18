@@ -34,10 +34,10 @@ write_files:
         audit-log-maxage: "10"
         audit-log-maxsize: "100"
         audit-policy-file: "/etc/kubernetes/audit/audit-policy.yaml"
-        oidc-issuer-url: https://jpw.auth0.com/
-        oidc-client-id: 80I4BFW2KNa9mJb5MQaacMU3IiF4HCd1
-        oidc-username-claim: email
-        oidc-groups-claim: groups
+        # oidc-issuer-url: https://yourname.auth0.com/
+        # oidc-client-id: XXXXYYYYZZZZ000011122233
+        # oidc-username-claim: email
+        # oidc-groups-claim: groups
 
       apiServerExtraVolumes: 
         - name: "audit-policy"
