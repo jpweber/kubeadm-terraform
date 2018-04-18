@@ -60,11 +60,6 @@ variable "num_private_subnets" {
   default = 3
 }
 
-# variable "num_nodes" {
-#   type    = "string"
-#   default = ""
-# }
-
 variable "max_nodes" {
   type    = "string"
   default = "19"

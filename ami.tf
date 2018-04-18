@@ -28,13 +28,3 @@ data "aws_ami" "ubuntu" {
 output "ami" {
   value = "${data.aws_ami.ubuntu.id}"
 }
-
-/*
-output "image_name" {
-  value = "${data.aws_ami.ubuntu.name}"
-}
-
-output "image_creation_date" {
-  value = "${data.aws_ami.ubuntu.creation_date}"
-}
-*/

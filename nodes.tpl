@@ -50,10 +50,7 @@ runcmd:
   - sudo hostname $(curl 169.254.169.254/latest/meta-data/hostname)
   - systemctl start docker
   - sleep 120 && for i in $(seq 10); do echo "kubeadm join $i" && kubeadm join --token=${k8s_token} --discovery-token-unsafe-skip-ca-verification ${control_plane_ip}:6443 && break || sleep 15; done
-  # --discovery-token-ca-cert-hash sha256:95dc339179f5e68b6f061a6e9e44ae630526fa9a06ded67ed9858d9e0b4974ee
 
 output: { all : '| tee -a /var/log/cloud-init-output.log' }
 
 final_message: "The system is finally up, after $UPTIME seconds"
-
-# - sleep 120 && for i in $(seq 10); do echo "kubeadm join $i" && kubeadm join --token=${k8s_token} ${control_plane_ip}:6443 && break || sleep 15; done
