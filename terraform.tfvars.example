@@ -1,5 +1,5 @@
 key_name="id_rsa"
 stage="staging"
-k8s_token="ee99fa.4fd6d8638c0e21bd"
+k8s_token="d96889.942449cf584d2811"
 route53_elb_cname="my.cluster.io"
 route53_zone_id="<zone id>"
