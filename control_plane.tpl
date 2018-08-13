@@ -26,9 +26,9 @@ write_files:
       apiServerCertSANs: [${elb_dnsname}]
       featureGates:
         CoreDNS: true
-        DynamicKubeletConfig: true
+        DynamicKubeletConfig: false
       apiServerExtraArgs:
-        admission-control: NamespaceAutoProvision,Initializers,NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,DefaultTolerationSeconds,NodeRestriction,ResourceQuota,PodTolerationRestriction
+        enable-admission-plugins: NamespaceAutoProvision,Initializers,NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,NodeRestriction,ResourceQuota,PodTolerationRestriction
         cloud-provider: aws
         audit-log-path: "/var/log/kube-audit"
         audit-log-maxage: "10"

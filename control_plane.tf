@@ -50,15 +50,7 @@ resource "aws_instance" "control_plane" {
     user        = "ubuntu"
     private_key = "${file("/Users/jamesweber/.ssh/id_rsa")}"
   }
-  provisioner "remote-exec" {
-    inline = [
-      "mkdir -p $HOME/.kube",
-      "until ls /etc/kubernetes/admin.conf; do sleep 3; done",
-      "sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config",
-      "sudo chown $(id -u):$(id -g) $HOME/.kube/config",
-      "cat $HOME/.kube/config",
-    ]
-  }
+
 }
 
 data "template_file" "control_plane" {
