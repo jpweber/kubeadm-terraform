@@ -16,35 +16,46 @@ write_files:
     owner: root:root
     permissions: 0644
     content: |
-      apiVersion: kubeadm.k8s.io/v1alpha1
-      kind: MasterConfiguration
+      apiVersion: kubeadm.k8s.io/v1beta1
+      kind: InitConfiguration
+      bootstrapTokens:
+      - groups:
+        - system:bootstrappers:kubeadm:default-node-token
+        token: ee99fa.4fd6d8638c0e21bd
+        ttl: 0s
+        usages:
+        - signing
+        - authentication
+      ---
+      apiVersion: kubeadm.k8s.io/v1beta1
+      kind: ClusterConfiguration
+      apiServer:
+        certSANs: 
+        - ${elb_dnsname}
+        extraArgs:
+          cloud-provider: aws
+          enable-admission-plugins: NamespaceAutoProvision,Initializers,NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,NodeRestriction,ResourceQuota,PodTolerationRestriction
+          # oidc-issuer-url: https://jpw.auth0.com/
+          # oidc-client-id: 26Jvzt7afZ7Ldh7Z4rvA9TQ6srpDvJJm
+          # oidc-username-claim: email
+          # oidc-groups-claim: groups
+        extraVolumes:
+        - hostPath: /etc/kubernetes/audit
+          mountPath: /etc/kubernetes/audit
+          name: audit-policy
+      # auditPolicy:
+        # logDir: "/var/log/kube-audit"
+        # logMaxAge: "10"
+        # audit-log-maxsize: "100"
+        # audit-policy-file: "/etc/kubernetes/audit/audit-policy.yaml"
+      controllerManager:
+        extraArgs:
+          cloud-provider: aws
+          configure-cloud-routes: "false"
       networking:
+        dnsDomain: cluster.local
         podSubnet: 192.168.0.0/16
-      cloudProvider: aws
-      token: ee99fa.4fd6d8638c0e21bd
-      tokenTTL: "0"
-      apiServerCertSANs: [${elb_dnsname}]
-      featureGates:
-        CoreDNS: true
-        DynamicKubeletConfig: false
-      apiServerExtraArgs:
-        enable-admission-plugins: NamespaceAutoProvision,Initializers,NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,NodeRestriction,ResourceQuota,PodTolerationRestriction
-        cloud-provider: aws
-        audit-log-path: "/var/log/kube-audit"
-        audit-log-maxage: "10"
-        audit-log-maxsize: "100"
-        audit-policy-file: "/etc/kubernetes/audit/audit-policy.yaml"
-        # oidc-issuer-url: https://yourname.auth0.com/
-        # oidc-client-id: XXXXYYYYZZZZ000011122233
-        # oidc-username-claim: email
-        # oidc-groups-claim: groups
-      controllerManagerExtraArgs:
-        cloud-provider: aws
-        configure-cloud-routes: "false"
-      apiServerExtraVolumes: 
-        - name: "audit-policy"
-          hostPath: "/etc/kubernetes/audit"
-          mountPath: "/etc/kubernetes/audit"
+        serviceSubnet: 10.96.0.0/12
 
   - path: /etc/kubernetes/audit/audit-policy.yaml
     owner: root:root
@@ -175,7 +186,7 @@ runcmd:
   - apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv-keys 0xF76221572C52609D 0x3746C208A7317B0F
   - echo "deb https://apt.dockerproject.org/repo ubuntu-xenial main" | sudo tee /etc/apt/sources.list.d/docker.list
   - echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
-  - apt-get update && apt-get install -y --allow-unauthenticated docker-engine kubelet kubeadm kubectl kubernetes-cni
+  - apt-get update && apt-get install -y --allow-unauthenticated docker-engine kubelet=1.13.2-00 kubeadm=1.13.2-00 kubectl=1.13.2-00 kubernetes-cni
   - systemctl daemon-reload
   - systemctl enable docker
   - systemctl enable kubelet
@@ -187,7 +198,7 @@ runcmd:
   - mkdir -p $HOME/.kube
   - sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
   - sudo chown $(id -u):$(id -g) $HOME/.kube/config
-  - kubectl apply -f https://docs.projectcalico.org/v3.0/getting-started/kubernetes/installation/hosted/kubeadm/1.7/calico.yaml
+  - kubectl apply -f https://docs.projectcalico.org/v3.4/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml
 
 output: { all : '| tee -a /var/log/cloud-init-output.log' }
 
